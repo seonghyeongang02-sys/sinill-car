@@ -1,0 +1,571 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>2026 신일교회 여름수련회 · 차량 배치</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/static/pretendard.min.css">
+<style>
+  :root{
+    --ink:#16203a; --ink2:#41506f; --sub:#6b7890;
+    --paper:#ffffff; --card:#ffffff; --line:#e4e9f1;
+    --navy:#1f2a4a; --navy-soft:#eef2f9; --band:#12203f;
+    --go:#1f8b6b; --go-bg:#e6f4ee;
+    --amber:#b9791a; --amber-bg:#fdf3e2;
+    --hold:#a23b3b; --hold-bg:#fbecec;
+  }
+  *{box-sizing:border-box; margin:0; padding:0;}
+  body{background:var(--paper); color:var(--ink);
+    font-family:"Pretendard Variable",Pretendard,-apple-system,BlinkMacSystemFont,"맑은 고딕",sans-serif;
+    line-height:1.5; -webkit-font-smoothing:antialiased;}
+  .tabnum{font-variant-numeric:tabular-nums;}
+  header{background:var(--band); color:#fff; padding:22px 20px 18px;}
+  .hwrap{max-width:1080px; margin:0 auto;}
+  .eyebrow{font-size:13px; letter-spacing:.01em; color:#8fa3c9; font-weight:700;}
+  h1{font-size:33px; font-weight:800; letter-spacing:-.03em; margin-top:6px;}
+  .route{color:#b9c6e0; font-size:13.5px; margin-top:6px;}
+  .route b{color:#fff;}
+  /* tabs */
+  .tabs{max-width:1080px; margin:0 auto; padding:0 20px; display:flex; gap:4px; border-bottom:1px solid var(--line); background:var(--paper); position:sticky; top:0; z-index:5;}
+  .tab{border:none; background:none; font-family:inherit; font-size:14.5px; font-weight:600; color:var(--sub); padding:14px 16px 12px; cursor:pointer; border-bottom:2.5px solid transparent; margin-bottom:-1px;}
+  .tab.on{color:var(--navy); border-bottom-color:var(--navy);}
+  .tab .cnt{font-size:11.5px; color:var(--sub); font-weight:600; margin-left:5px;}
+  .toolbar{max-width:1080px; margin:0 auto; padding:14px 20px 4px; display:flex; gap:10px; align-items:center; flex-wrap:wrap;}
+  .search{flex:1; min-width:160px; border:1px solid var(--line); border-radius:10px; padding:9px 13px; font-size:14px; font-family:inherit; background:#fff;}
+  .search:focus{outline:2px solid var(--navy);}
+  .btn{border:1px solid var(--line); background:#fff; border-radius:10px; padding:9px 14px; font-size:14px; cursor:pointer; font-family:inherit; color:var(--ink);}
+  .btn:hover{background:var(--navy-soft);}
+  .updated{font-size:12px; color:var(--sub); margin-left:auto;}
+  main{max-width:1080px; margin:0 auto; padding:10px 20px 60px;}
+  .panel{display:none;} .panel.on{display:block;}
+  /* stats */
+  .stats{display:grid; grid-template-columns:repeat(auto-fit,minmax(120px,1fr)); gap:10px; margin:8px 0 22px;}
+  .stat{background:var(--card); border:1px solid var(--line); border-radius:14px; padding:14px 16px;}
+  .stat .n{font-size:26px; font-weight:800; letter-spacing:-.02em;}
+  .stat .l{font-size:12.5px; color:var(--sub); margin-top:2px;}
+  .stat.go .n{color:var(--go);} .stat.amber .n{color:var(--amber);} .stat.hold .n{color:var(--hold);}
+  .sec-title{font-size:14px; font-weight:800; margin:22px 0 12px;}
+  .sec-title .hint{font-size:11.5px; font-weight:500; color:var(--text3,#8e8e93); margin-left:8px;}
+  .insight{display:flex; flex-direction:column; gap:12px;}
+  .irow2{display:flex; gap:10px; align-items:flex-start; font-size:13.5px;}
+  .irow2 .ico{flex:0 0 auto; width:22px; height:22px; border-radius:7px; display:flex; align-items:center; justify-content:center; font-size:12px; color:#fff;}
+  .irow2 .ico.ok{background:#1f8b6b;} .irow2 .ico.warn{background:#c98a1a;} .irow2 .ico.info{background:#2f6fb5;}
+  .irow2 b{font-weight:700;}
+  .irow2 .sub{color:var(--sub); font-size:12.5px;}
+  .viz{background:var(--card); border:1px solid var(--line); border-radius:16px; padding:16px 18px;}
+  .capbar{display:grid; grid-template-columns:120px 1fr 70px; gap:12px; align-items:center; margin:11px 0; font-size:13px;}
+  .capbar .cl{font-weight:600;}
+  .ctrack{background:var(--navy-soft); border-radius:8px; height:18px; overflow:hidden;}
+  .cfill{height:100%; border-radius:8px; min-width:2px; transition:width .3s;}
+  .cfill.church{background:#2f6fb5;} .cfill.rent{background:#f6c445;} .cfill.car{background:#3aa38a;} .cfill.hold{background:#a23b3b;} .cfill.over{background:var(--hold);}
+  .capbar .cv{text-align:right; font-variant-numeric:tabular-nums; color:var(--sub); font-size:12.5px;}
+  .stackbar{display:flex; height:28px; border-radius:9px; overflow:hidden; margin:2px 0 4px;}
+  .stackbar>div{display:flex; align-items:center; justify-content:center; color:#fff; font-size:13px; font-weight:700; min-width:26px;}
+  .seg-full{background:#2f6fb5;} .seg-part{background:#d99a2b;}
+  .leg{display:flex; gap:18px; flex-wrap:wrap; font-size:12.5px; color:var(--sub); margin-top:10px;}
+  .leg b{color:var(--ink);}
+  .leg .dot{display:inline-block; width:10px; height:10px; border-radius:3px; margin-right:5px; vertical-align:middle;}
+  /* 세로 막대(컬럼) 차트 */
+  .vbars{display:flex; gap:16px; align-items:flex-end; padding:6px 2px 2px; overflow-x:auto;}
+  .vbar{flex:1; min-width:50px; display:flex; flex-direction:column; align-items:center;}
+  .vbar .val{font-size:15px; font-weight:800; margin-bottom:6px; letter-spacing:-.02em;}
+  .vbar .val .cap2{font-size:11px; font-weight:600; color:var(--sub);}
+  .vcol{width:100%; max-width:60px; height:170px; background:var(--navy-soft); border-radius:9px; display:flex; align-items:flex-end; overflow:hidden;}
+  .vcol>i{display:block; width:100%; border-radius:9px 9px 0 0; transition:height .35s ease;}
+  .vbar .lab{font-size:12px; color:var(--sub); margin-top:9px; text-align:center; line-height:1.25; font-weight:600;}
+  .daygrid{display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:14px;}
+  .daycard{border:1px solid var(--line); border-radius:14px; padding:14px 14px 8px;}
+  .daycard .dch{display:flex; justify-content:space-between; align-items:baseline; margin-bottom:12px;}
+  .daycard .dch .d{font-size:14.5px; font-weight:800;}
+  .daycard .dch .tot{font-size:12.5px; color:var(--sub); font-weight:600;}
+  .daycard .dch .tot b{color:var(--ink); font-size:16px;}
+  .vbars-c{justify-content:center;}
+  .tworow{display:grid; grid-template-columns:1fr 1fr; gap:14px;}
+  @media(max-width:600px){ .tworow{grid-template-columns:1fr;} }
+  .minihd{font-size:12.5px; font-weight:700; color:var(--sub); margin-bottom:12px;}
+  .compact .vcol{height:104px;}
+  .compact .vbar .val{font-size:14px;}
+  .donutwrap{display:flex; align-items:center; gap:24px; flex-wrap:wrap;}
+  .donut{width:132px; height:132px; border-radius:50%; position:relative; flex:0 0 auto;}
+  .donut .hole{position:absolute; inset:22px; background:#fff; border-radius:50%; display:flex; flex-direction:column; align-items:center; justify-content:center;}
+  .donut .hole b{font-size:24px; font-weight:800; letter-spacing:-.02em;}
+  .donut .hole span{font-size:11px; color:var(--sub);}
+  .dleg{display:flex; flex-direction:column; gap:8px; font-size:14px;}
+  .dleg .row{display:flex; align-items:center; gap:8px;}
+  .dleg .dot{width:12px; height:12px; border-radius:4px;}
+  .dleg b{font-weight:700;} .dleg .pct{color:var(--sub); font-size:12.5px;}
+  @media(max-width:600px){ .capbar{grid-template-columns:92px 1fr 58px; gap:8px; font-size:12px;} }
+  /* day sections */
+  .day{margin-bottom:30px;}
+  .daysum{display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin:4px 0 24px;}
+  .dscard{border:1px solid var(--line); border-radius:14px; padding:14px 16px; background:var(--card);}
+  .dscard .dsd{font-size:12.5px; color:var(--sub); font-weight:700;}
+  .dscard .dsn{font-size:28px; font-weight:800; letter-spacing:-.02em; margin-top:2px;}
+  .dscard .dsn span{font-size:14px; font-weight:600; color:var(--sub); margin-left:2px;}
+  .dscard .dssub{font-size:12px; color:var(--sub); margin-top:4px;}
+  .dscard .dssub .warn{color:#a23b3b; font-weight:700;}
+  @media(max-width:600px){ .daysum{grid-template-columns:1fr;} }
+  .dayhd{display:flex; align-items:baseline; gap:12px; padding-bottom:10px; border-bottom:2px solid var(--ink); margin-bottom:16px; flex-wrap:wrap;}
+  .dayhd .d{font-size:18px; font-weight:800;}
+  .dayhd .t{font-size:13px; color:var(--sub); font-weight:600;}
+  .buses{display:grid; grid-template-columns:1fr; gap:14px; align-items:start; justify-items:start;}
+  .bus{background:var(--card); border:1px solid var(--line); border-radius:16px; overflow:hidden;}
+  .bushd{padding:13px 16px; display:flex; align-items:center; justify-content:space-between; border-bottom:1px solid var(--line);}
+  .bushd .bn{font-weight:700; font-size:14.5px;}
+  .bushd .bn small{font-weight:500; color:var(--sub); font-size:12px;}
+  .cap{font-size:12.5px; color:var(--sub); font-variant-numeric:tabular-nums;}
+  .cap.over{color:var(--hold); font-weight:700;}
+  .bar{height:4px; background:var(--navy-soft);} .bar>i{display:block; height:100%; background:var(--navy);} .bar>i.over{background:var(--hold);}
+  .riders{padding:12px 14px; display:flex; flex-wrap:wrap; gap:7px;}
+  .chip{background:var(--navy-soft); border-radius:999px; padding:5px 11px; font-size:13px; white-space:nowrap;}
+  .chip .g{color:var(--sub); font-size:11.5px; margin-left:3px;}
+  .chip.flag{background:var(--amber-bg); color:var(--amber);} .chip.flag .g{color:var(--amber);}
+  .note{font-size:12px; color:var(--sub);}
+  /* 버스 좌석 배치도 (스쿨버스풍) */
+  .busmap{background:#fff; border:2px solid var(--navy); border-radius:16px 30px 30px 16px; overflow:hidden; width:100%; max-width:300px;}
+  /* 45인(대여) 버스 = 노랑 (기본) */
+  .busmap .sign{background:#f6c445; color:#3a2e05; font-weight:800; font-size:13.5px; padding:9px 16px; display:flex; justify-content:space-between; align-items:center; gap:8px;}
+  .busmap .sign .cap{font-weight:700; font-variant-numeric:tabular-nums; color:#5a4a10; white-space:nowrap;}
+  .busmap .sign .cap.over{color:var(--hold);}
+  /* 교회버스 = 파랑 */
+  .busmap.church{border-color:#2f6fb5;}
+  .busmap.church .sign{background:#2f6fb5; color:#fff;}
+  .busmap.church .sign .cap{color:#d6e6f7;}
+  .busmap.church .sign .cap.over{color:#ffd9d9;}
+  .busmap.church .seat{background:#e8f1fb; border-color:#bcd6f0; color:#1c4f86;}
+  /* 스타렉스 = 보라 */
+  .busmap.starex{border-color:#7a5cc0;}
+  .busmap.starex .sign{background:#7a5cc0; color:#fff;}
+  .busmap.starex .sign .cap{color:#e5dcf6;}
+  .busmap.starex .sign .cap.over{color:#ffd9d9;}
+  .busmap.starex .seat{background:#f0ebfa; border-color:#d6c9ef; color:#4a3585;}
+  .busmap .driver{font-size:11px; color:var(--sub); text-align:right; padding:7px 16px 0;}
+  .seatgrid{display:grid; grid-template-columns:1fr 16px 1fr; gap:6px; padding:8px 14px 16px;}
+  .aislecell{}
+  .seat{background:var(--navy-soft); border:1.5px solid #d5e0f0; border-radius:11px 11px 6px 6px; min-height:38px; display:flex; flex-direction:column; align-items:center; justify-content:center; font-size:12px; font-weight:700; line-height:1.15; text-align:center; padding:3px 2px;}
+  .seat .g{color:var(--sub); font-size:9.5px; font-weight:500;}
+  .seat.empty{background:transparent; border-style:dashed; border-color:var(--line); color:#c3ccdb; font-weight:500;}
+  .seat.flag{background:var(--amber-bg); border-color:#eecf97; color:var(--amber);}
+  .seat.over{background:var(--hold-bg); border-color:#e4b8b8; color:var(--hold);}
+  .seat.hit{outline:2.5px solid var(--go); outline-offset:1px;}
+  .seat.dim{opacity:.32;}
+  /* 자차 (개별 차량) */
+  .cars{display:grid; grid-template-columns:1fr; gap:16px; align-items:start; justify-items:start;}
+  .carcard{position:relative; background:#fff; border:2px solid #3aa38a; border-radius:18px 18px 14px 14px; margin-bottom:6px; width:100%; max-width:360px;}
+  .carcard .carhd{background:#e6f6f0; color:#1c6b57; padding:9px 14px; display:flex; justify-content:space-between; align-items:center; border-radius:15px 15px 0 0; font-weight:700; font-size:13.5px;}
+  .carcard .carhd .cc{color:#3aa38a; font-weight:600; font-size:12px;}
+  .carcard .incap{display:flex; align-items:center; gap:8px;}
+  .cargrp-hd{font-size:14px; font-weight:800; padding:12px 0 10px; border-top:3px solid var(--ink); margin:14px 0 12px; display:flex; align-items:center; gap:9px; letter-spacing:-.01em;}
+  .cargrp-hd::before{content:''; width:13px; height:13px; border-radius:4px; background:var(--ink);}
+  .cargrp-hd.am{border-top-color:#2f6fb5;} .cargrp-hd.am::before{background:#2f6fb5;}
+  .cargrp-hd.pm{border-top-color:#3aa38a;} .cargrp-hd.pm::before{background:#3aa38a;}
+  .carbody{padding:12px 14px 16px; display:grid; grid-template-columns:1fr 1fr; gap:8px;}
+  .cseat{background:var(--navy-soft); border-radius:10px; min-height:46px; display:flex; flex-direction:column; align-items:center; justify-content:center; font-size:12.5px; font-weight:600; text-align:center; padding:5px 3px; line-height:1.15;}
+  .cseat .rl{font-size:9.5px; color:#1c6b57; font-weight:700;}
+  .cseat .g{font-size:9.5px; color:var(--sub); font-weight:500; margin-top:1px;}
+  .cseat.drv{background:#e6f6f0; color:#1c6b57;}
+  .cseat.empty{background:transparent; border:1.5px dashed var(--line); color:#c3ccdb; font-weight:500;}
+  .cseat.hit{outline:2.5px solid var(--go); outline-offset:1px;}
+  .cseat.dim{opacity:.32;}
+  .cseat.over{background:var(--hold-bg); color:var(--hold);}
+  .carcard .wheel{position:absolute; bottom:-8px; width:16px; height:16px; border-radius:50%; background:#2f2f2f; border:3px solid #fff; box-shadow:0 0 0 1px #2f2f2f;}
+  .carcard .wheel.l{left:26px;} .carcard .wheel.r{right:26px;}
+  .indiv-row{padding:9px 14px; border-top:1px solid var(--line); font-size:13.5px; display:flex; gap:8px; align-items:baseline;}
+  .indiv-row:first-child{border-top:none;}
+  .indiv-row .nm{font-weight:600;} .indiv-row .g{color:var(--sub); font-size:12px;} .indiv-row .mm{color:var(--sub); font-size:12.5px;}
+  .empty{padding:16px 14px; color:var(--sub); font-size:13px;}
+  /* tables */
+  .tablewrap{background:var(--card); border:1px solid var(--line); border-radius:16px; overflow-x:auto; -webkit-overflow-scrolling:touch;}
+  #rosterTbl, #specialTbl{min-width:520px;}
+  table{width:100%; border-collapse:collapse; font-size:13.5px;}
+  th,td{padding:10px 14px; text-align:left; border:1px solid var(--line);}
+  thead th{background:var(--navy-soft); font-weight:700; font-size:12.5px; color:var(--ink2);}
+  tbody tr{border-top:1px solid var(--line);}
+  tbody tr.flag{background:var(--amber-bg);} tbody tr.hold{background:var(--hold-bg);}
+  /* 명단 탭 컴팩트 */
+  #rosterTbl th, #rosterTbl td{padding:5px 12px; font-size:12.5px;}
+  #rosterTbl thead th{font-size:11.5px;}
+  .tag{display:inline-block; font-size:11.5px; padding:2px 8px; border-radius:999px;}
+  .tag.full{background:var(--go-bg); color:var(--go);} .tag.part{background:var(--amber-bg); color:var(--amber);}
+  .legend{font-size:12px; color:var(--sub); margin-top:12px; display:flex; gap:16px; flex-wrap:wrap;}
+  .legend span::before{content:"●"; margin-right:5px;}
+  .lg-amber::before{color:var(--amber);} .lg-hold::before{color:var(--hold);}
+  .foot{margin-top:26px; font-size:12px; color:var(--sub); text-align:center;}
+  #err{display:none; background:var(--hold-bg); color:var(--hold); padding:14px 18px; border-radius:12px; margin:16px 0; font-size:14px;}
+  #loading{padding:50px 0; text-align:center; color:var(--sub);}
+  @media(max-width:600px){
+    header{padding:18px 14px 14px;}
+    h1{font-size:22px;}
+    .route{font-size:12.5px;}
+    .tabs{padding:0 8px; overflow-x:auto; flex-wrap:nowrap; -webkit-overflow-scrolling:touch;}
+    .tabs::-webkit-scrollbar{display:none;}
+    .tab{padding:12px 11px 10px; font-size:14px; white-space:nowrap;}
+    .toolbar{padding:12px 14px 4px; gap:8px;}
+    .search{min-width:0; flex:1 1 100%;}
+    .updated{margin-left:0; flex-basis:100%;}
+    main{padding:10px 14px 50px;}
+    .stats{grid-template-columns:repeat(2,1fr); gap:8px;}
+    .stat .n{font-size:22px;}
+    .dayhd .d{font-size:16px;}
+    .seatgrid{grid-template-columns:1fr 10px 1fr; gap:4px; padding:8px 8px 12px;}
+    .seat{min-height:34px; font-size:11px; border-radius:9px 9px 5px 5px;}
+    .seat .g{font-size:9px;}
+    #rosterTbl th, #rosterTbl td{padding:6px 10px;}
+  }
+  @media print{
+    body{background:#fff;} .toolbar,.btn,.search,.tabs{display:none !important;}
+    .panel{display:block !important;} .panel:not(:first-of-type){page-break-before:always;}
+    header{background:#fff; color:#000; border-bottom:2px solid #000;}
+    .eyebrow{color:#555;} h1,.route b{color:#000;} .route{color:#333;}
+    .bus,.stat,.tablewrap{break-inside:avoid;}
+  }
+</style>
+</head>
+<body>
+<header>
+  <div class="hwrap">
+    <div class="eyebrow">2026 신일교회 여름수련회</div>
+    <h1>차량 배치</h1>
+  </div>
+</header>
+
+<div class="tabs" id="tabs">
+  <button class="tab" data-tab="roster">명단<span class="cnt" id="c-roster"></span></button>
+  <button class="tab" data-tab="special">부분참석<span class="cnt" id="c-special"></span></button>
+  <button class="tab" data-tab="stats">집계</button>
+  <button class="tab on" data-tab="cars">차량배치</button>
+</div>
+
+<div class="toolbar">
+  <input id="q" class="search" placeholder="이름·동기로 검색">
+  <button class="btn" onclick="window.print()">🖨 인쇄</button>
+  <button class="btn" onclick="load()">↻ 새로고침</button>
+  <span id="updated" class="updated"></span>
+</div>
+
+<main>
+  <div id="err"></div>
+  <div id="loading">불러오는 중…</div>
+  <div id="content" style="display:none">
+    <section class="panel" data-panel="roster">
+      <div class="tablewrap"><table id="rosterTbl"><thead><tr>
+        <th>이름</th><th>동기</th><th>참석</th><th>도착 시점</th><th>자차</th><th>동승</th><th>상태</th>
+      </tr></thead><tbody></tbody></table></div>
+      <div class="legend"><span class="lg-amber">일정 확인·미확정</span><span class="lg-hold">보류</span></div>
+    </section>
+
+    <section class="panel" data-panel="special">
+      <div class="sec-title">부분참석 · 일정 확인 인원</div>
+      <div class="tablewrap"><table id="specialTbl"><thead><tr>
+        <th>이름</th><th>동기</th><th>참석</th><th>도착 시점</th><th>편성</th><th>메모</th>
+      </tr></thead><tbody></tbody></table></div>
+    </section>
+
+    <section class="panel" data-panel="stats">
+      <div class="stats" id="statCards"></div>
+      <div class="sec-title">신청 현황</div>
+      <div class="tworow">
+        <div class="viz"><div class="minihd">성비</div><div id="genderViz"></div></div>
+        <div class="viz"><div class="minihd">주차별 신청</div><div id="weekViz"></div></div>
+      </div>
+      <div class="sec-title">차량별 탑승 현황 <span class="hint">기둥 높이=정원 · 채움=배치</span></div>
+      <div class="viz" id="capViz"></div>
+      <div class="sec-title">동기 분포 <span class="hint">파랑=19동기 이하(교회버스) · 노랑=20~26(45인)</span></div>
+      <div class="viz" id="donggiViz"></div>
+      <div class="sec-title">부분참석 도착 시간대 <span class="hint">비고를 분석해 자동 분류</span></div>
+      <div class="viz" id="timingViz"></div>
+      <div class="sec-title">현황 요약</div>
+      <div class="viz" id="insightViz"></div>
+    </section>
+
+    <section class="panel on" data-panel="cars">
+      <div id="days"></div>
+    </section>
+
+    <div class="foot">연락처 등 개인정보는 이 화면에 포함되지 않습니다. · 문의는 청년부 차량 담당에게</div>
+  </div>
+</main>
+
+<script>
+/* ===== 설정 (프로젝트 주소 · 공개키) ===== */
+const SUPABASE_URL = "https://eyrqxeotoonshqbktrux.supabase.co";
+const SUPABASE_KEY = "sb_publishable_M-rqXgZ-SNHOMk_ozLKIJw_KYnydGp3";
+const DATA_DATE = "2026년 7월 24일";  /* 최신화한 날짜 (파일 받은 날). 갱신 때마다 여기만 바꾸면 됨 */
+const EMBEDDED = [{"name": "목사님", "donggi": null, "donggi_num": null, "attendance": "풀참", "classification": "풀참", "arrival_note": null, "car_owner": false, "car_share": null, "fri_vehicle": "스타렉스", "sat_vehicle": null, "sun_vehicle": "스타렉스", "status": "배치", "memo": "스타렉스 탑승", "car_group": null, "gender": null, "applied_at": null}, {"name": "전도사님", "donggi": null, "donggi_num": null, "attendance": "풀참", "classification": "풀참", "arrival_note": null, "car_owner": false, "car_share": null, "fri_vehicle": "스타렉스", "sat_vehicle": null, "sun_vehicle": "스타렉스", "status": "배치", "memo": "스타렉스 탑승", "car_group": null, "gender": null, "applied_at": null}, {"name": "김지후", "donggi": "26동기", "donggi_num": 26, "attendance": "풀참", "classification": "풀참", "arrival_note": null, "car_owner": false, "car_share": null, "fri_vehicle": "45인버스", "sat_vehicle": null, "sun_vehicle": "45인버스", "status": "배치", "memo": null, "car_group": null, "gender": "남", "applied_at": "2026-07-19"}, {"name": "오승민", "donggi": "26동기", "donggi_num": 26, "attendance": "풀참", "classification": "풀참", "arrival_note": null, "car_owner": false, "car_share": null, "fri_vehicle": "45인버스", "sat_vehicle": null, "sun_vehicle": "45인버스", "status": "배치", "memo": null, "car_group": null, "gender": "여", "applied_at": "2026-07-23"}, {"name": "임예준", "donggi": "26동기", "donggi_num": 26, "attendance": "풀참", "classification": "풀참", "arrival_note": null, "car_owner": false, "car_share": null, "fri_vehicle": "45인버스", "sat_vehicle": null, "sun_vehicle": "45인버스", "status": "배치", "memo": null, "car_group": null, "gender": "남", "applied_at": "2026-07-19"}, {"name": "전윤석", "donggi": "26동기", "donggi_num": 26, "attendance": "풀참", "classification": "풀참", "arrival_note": null, "car_owner": false, "car_share": null, "fri_vehicle": "45인버스", "sat_vehicle": null, "sun_vehicle": "45인버스", "status": "배치", "memo": null, "car_group": null, "gender": "남", "applied_at": "2026-07-19"}, {"name": "최민석", "donggi": "26동기", "donggi_num": 26, "attendance": "풀참", "classification": "풀참", "arrival_note": null, "car_owner": false, "car_share": null, "fri_vehicle": "45인버스", "sat_vehicle": null, "sun_vehicle": "45인버스", "status": "배치", "memo": null, "car_group": null, "gender": "남", "applied_at": "2026-07-19"}, {"name": "박서연", "donggi": "25동기", "donggi_num": 25, "attendance": "풀참", "classification": "풀참", "arrival_note": null, "car_owner": false, "car_share": null, "fri_vehicle": "45인버스", "sat_vehicle": null, "sun_vehicle": "45인버스", "status": "배치", "memo": null, "car_group": null, "gender": "여", "applied_at": "2026-07-22"}, {"name": "박수연", "donggi": "25동기", "donggi_num": 25, "attendance": "풀참", "classification": "풀참", "arrival_note": null, "car_owner": false, "car_share": null, "fri_vehicle": "45인버스", "sat_vehicle": null, "sun_vehicle": "45인버스", "status": "배치", "memo": null, "car_group": null, "gender": "여", "applied_at": "2026-07-19"}, {"name": "이희민", "donggi": "25동기", "donggi_num": 25, "attendance": "풀참", "classification": "풀참", "arrival_note": null, "car_owner": false, "car_share": ".", "fri_vehicle": "45인버스", "sat_vehicle": null, "sun_vehicle": "45인버스", "status": "배치", "memo": null, "car_group": null, "gender": "남", "applied_at": "2026-07-19"}, {"name": "임예소", "donggi": "25동기", "donggi_num": 25, "attendance": "풀참", "classification": "풀참", "arrival_note": null, "car_owner": false, "car_share": null, "fri_vehicle": "45인버스", "sat_vehicle": null, "sun_vehicle": "45인버스", "status": "배치", "memo": null, "car_group": null, "gender": "여", "applied_at": "2026-07-21"}, {"name": "정지용", "donggi": "25동기", "donggi_num": 25, "attendance": "풀참", "classification": "풀참", "arrival_note": null, "car_owner": false, "car_share": null, "fri_vehicle": "45인버스", "sat_vehicle": null, "sun_vehicle": "45인버스", "status": "배치", "memo": null, "car_group": null, "gender": "남", "applied_at": "2026-07-19"}, {"name": "김민주", "donggi": "24동기", "donggi_num": 24, "attendance": "풀참", "classification": "풀참", "arrival_note": null, "car_owner": false, "car_share": null, "fri_vehicle": "45인버스", "sat_vehicle": null, "sun_vehicle": "45인버스", "status": "배치", "memo": null, "car_group": null, "gender": "여", "applied_at": "2026-07-19"}, {"name": "김준휘", "donggi": "24동기", "donggi_num": 24, "attendance": "풀참", "classification": "풀참", "arrival_note": null, "car_owner": false, "car_share": null, "fri_vehicle": "45인버스", "sat_vehicle": null, "sun_vehicle": "45인버스", "status": "배치", "memo": null, "car_group": null, "gender": "남", "applied_at": "2026-07-19"}, {"name": "우요셉", "donggi": "24동기", "donggi_num": 24, "attendance": "풀참", "classification": "풀참", "arrival_note": null, "car_owner": false, "car_share": null, "fri_vehicle": "45인버스", "sat_vehicle": null, "sun_vehicle": "45인버스", "status": "배치", "memo": null, "car_group": null, "gender": "남", "applied_at": "2026-07-19"}, {"name": "이의빈", "donggi": "24동기", "donggi_num": 24, "attendance": "풀참", "classification": "풀참", "arrival_note": null, "car_owner": false, "car_share": null, "fri_vehicle": "45인버스", "sat_vehicle": null, "sun_vehicle": "45인버스", "status": "배치", "memo": null, "car_group": null, "gender": "남", "applied_at": "2026-07-23"}, {"name": "박현우", "donggi": "23동기", "donggi_num": 23, "attendance": "풀참", "classification": "풀참", "arrival_note": null, "car_owner": false, "car_share": null, "fri_vehicle": "45인버스", "sat_vehicle": null, "sun_vehicle": "45인버스", "status": "배치", "memo": null, "car_group": null, "gender": "남", "applied_at": "2026-07-21"}, {"name": "최민서", "donggi": "23동기", "donggi_num": 23, "attendance": "풀참", "classification": "풀참", "arrival_note": null, "car_owner": false, "car_share": null, "fri_vehicle": "45인버스", "sat_vehicle": null, "sun_vehicle": "45인버스", "status": "배치", "memo": null, "car_group": null, "gender": "여", "applied_at": "2026-07-19"}, {"name": "강재건", "donggi": "22동기", "donggi_num": 22, "attendance": "풀참", "classification": "풀참", "arrival_note": null, "car_owner": false, "car_share": null, "fri_vehicle": "45인버스", "sat_vehicle": null, "sun_vehicle": "45인버스", "status": "배치", "memo": null, "car_group": null, "gender": "남", "applied_at": "2026-07-19"}, {"name": "김지민", "donggi": "22동기", "donggi_num": 22, "attendance": "풀참", "classification": "풀참", "arrival_note": null, "car_owner": false, "car_share": null, "fri_vehicle": "45인버스", "sat_vehicle": null, "sun_vehicle": "45인버스", "status": "배치", "memo": null, "car_group": null, "gender": "여", "applied_at": "2026-07-19"}, {"name": "문희준", "donggi": "22동기", "donggi_num": 22, "attendance": "풀참", "classification": "풀참", "arrival_note": null, "car_owner": false, "car_share": null, "fri_vehicle": "45인버스", "sat_vehicle": null, "sun_vehicle": "45인버스", "status": "배치", "memo": null, "car_group": null, "gender": "남", "applied_at": "2026-07-21"}, {"name": "박성희", "donggi": "22동기", "donggi_num": 22, "attendance": "풀참", "classification": "풀참", "arrival_note": null, "car_owner": false, "car_share": null, "fri_vehicle": "45인버스", "sat_vehicle": null, "sun_vehicle": "45인버스", "status": "배치", "memo": null, "car_group": null, "gender": "여", "applied_at": "2026-07-21"}, {"name": "서예진", "donggi": "22동기", "donggi_num": 22, "attendance": "부분참석", "classification": "특이사항", "arrival_note": "In: 토요일 오전/Out: 토요일 밤", "car_owner": false, "car_share": null, "fri_vehicle": null, "sat_vehicle": "교회버스", "sun_vehicle": null, "status": "배치", "memo": null, "car_group": null, "gender": "여", "applied_at": "2026-07-22"}, {"name": "조윤창", "donggi": "22동기", "donggi_num": 22, "attendance": "풀참", "classification": "풀참", "arrival_note": null, "car_owner": false, "car_share": null, "fri_vehicle": "45인버스", "sat_vehicle": null, "sun_vehicle": "45인버스", "status": "배치", "memo": null, "car_group": null, "gender": "남", "applied_at": "2026-07-19"}, {"name": "황현지", "donggi": "22동기", "donggi_num": 22, "attendance": "부분참석", "classification": "특이사항", "arrival_note": "토 오전", "car_owner": false, "car_share": null, "fri_vehicle": null, "sat_vehicle": "교회버스", "sun_vehicle": null, "status": "배치", "memo": null, "car_group": null, "gender": "여", "applied_at": "2026-07-19"}, {"name": "이서희", "donggi": "21동기", "donggi_num": 21, "attendance": "풀참", "classification": "풀참", "arrival_note": null, "car_owner": false, "car_share": null, "fri_vehicle": "45인버스", "sat_vehicle": null, "sun_vehicle": "45인버스", "status": "배치", "memo": null, "car_group": null, "gender": "여", "applied_at": "2026-07-19"}, {"name": "강성현", "donggi": "20동기", "donggi_num": 20, "attendance": "풀참", "classification": "풀참", "arrival_note": null, "car_owner": true, "car_share": null, "fri_vehicle": "자차", "sat_vehicle": null, "sun_vehicle": "자차", "status": "배치", "memo": "자차 이동(왕복)", "car_group": "강성현", "gender": "남", "applied_at": "2026-07-21"}, {"name": "김다혜", "donggi": "20동기", "donggi_num": 20, "attendance": "부분참석", "classification": "특이사항", "arrival_note": "토요일 아침 IN , 다같이 OUT", "car_owner": false, "car_share": null, "fri_vehicle": null, "sat_vehicle": "교회버스", "sun_vehicle": null, "status": "배치", "memo": "토 오전예배 드럼 — 예배 전 도착 필요", "car_group": null, "gender": "여", "applied_at": "2026-07-21"}, {"name": "송승현", "donggi": "20동기", "donggi_num": 20, "attendance": "풀참", "classification": "풀참", "arrival_note": null, "car_owner": false, "car_share": null, "fri_vehicle": "45인버스", "sat_vehicle": null, "sun_vehicle": "45인버스", "status": "배치", "memo": null, "car_group": null, "gender": "여", "applied_at": "2026-07-19"}, {"name": "조형민", "donggi": "20동기", "donggi_num": 20, "attendance": "풀참", "classification": "풀참", "arrival_note": null, "car_owner": false, "car_share": null, "fri_vehicle": "45인버스", "sat_vehicle": null, "sun_vehicle": "45인버스", "status": "배치", "memo": null, "car_group": null, "gender": "남", "applied_at": "2026-07-19"}, {"name": "서주완", "donggi": "19동기", "donggi_num": 19, "attendance": "부분참석", "classification": "특이사항", "arrival_note": "토요일 오전 이후", "car_owner": false, "car_share": null, "fri_vehicle": null, "sat_vehicle": "교회버스", "sun_vehicle": null, "status": "배치", "memo": null, "car_group": null, "gender": "남", "applied_at": "2026-07-22"}, {"name": "신희건", "donggi": "19동기", "donggi_num": 19, "attendance": "부분참석", "classification": "특이사항", "arrival_note": "토요일 오전 in", "car_owner": false, "car_share": null, "fri_vehicle": null, "sat_vehicle": "교회버스", "sun_vehicle": null, "status": "배치", "memo": null, "car_group": null, "gender": "남", "applied_at": "2026-07-23"}, {"name": "유예온", "donggi": "19동기", "donggi_num": 19, "attendance": "풀참", "classification": "풀참", "arrival_note": null, "car_owner": false, "car_share": null, "fri_vehicle": "교회버스", "sat_vehicle": null, "sun_vehicle": "45인버스", "status": "배치", "memo": null, "car_group": null, "gender": "여", "applied_at": "2026-07-19"}, {"name": "정진경", "donggi": "19동기", "donggi_num": 19, "attendance": "풀참", "classification": "풀참", "arrival_note": null, "car_owner": false, "car_share": null, "fri_vehicle": "교회버스", "sat_vehicle": null, "sun_vehicle": "45인버스", "status": "배치", "memo": null, "car_group": null, "gender": "여", "applied_at": "2026-07-19"}, {"name": "조성제", "donggi": "19동기", "donggi_num": 19, "attendance": "풀참", "classification": "풀참", "arrival_note": null, "car_owner": false, "car_share": null, "fri_vehicle": "교회버스", "sat_vehicle": null, "sun_vehicle": "45인버스", "status": "배치", "memo": null, "car_group": null, "gender": "남", "applied_at": "2026-07-21"}, {"name": "김민혜", "donggi": "18동기", "donggi_num": 18, "attendance": "풀참", "classification": "풀참", "arrival_note": null, "car_owner": false, "car_share": null, "fri_vehicle": "교회버스", "sat_vehicle": null, "sun_vehicle": "45인버스", "status": "배치", "memo": null, "car_group": null, "gender": "여", "applied_at": "2026-07-19"}, {"name": "박은수", "donggi": "18동기", "donggi_num": 18, "attendance": "부분참석", "classification": "특이사항", "arrival_note": "토요일 오전", "car_owner": false, "car_share": null, "fri_vehicle": null, "sat_vehicle": "교회버스", "sun_vehicle": null, "status": "배치", "memo": null, "car_group": null, "gender": "여", "applied_at": "2026-07-19"}, {"name": "이하선", "donggi": "17동기", "donggi_num": 17, "attendance": "풀참", "classification": "풀참", "arrival_note": null, "car_owner": false, "car_share": null, "fri_vehicle": "교회버스", "sat_vehicle": null, "sun_vehicle": "45인버스", "status": "배치", "memo": null, "car_group": null, "gender": "여", "applied_at": "2026-07-19"}, {"name": "전예진", "donggi": "17동기", "donggi_num": 17, "attendance": "부분참석", "classification": "특이사항", "arrival_note": "토요일 오전 in", "car_owner": false, "car_share": null, "fri_vehicle": null, "sat_vehicle": "교회버스", "sun_vehicle": null, "status": "배치", "memo": null, "car_group": null, "gender": "여", "applied_at": "2026-07-24"}, {"name": "권유나", "donggi": "16동기", "donggi_num": 16, "attendance": "풀참", "classification": "풀참", "arrival_note": null, "car_owner": false, "car_share": null, "fri_vehicle": "교회버스", "sat_vehicle": null, "sun_vehicle": "45인버스", "status": "배치", "memo": null, "car_group": null, "gender": "여", "applied_at": "2026-07-19"}, {"name": "김수지", "donggi": "16동기", "donggi_num": 16, "attendance": "풀참", "classification": "풀참", "arrival_note": null, "car_owner": false, "car_share": null, "fri_vehicle": "교회버스", "sat_vehicle": null, "sun_vehicle": "45인버스", "status": "배치", "memo": null, "car_group": null, "gender": "여", "applied_at": "2026-07-19"}, {"name": "김재혁", "donggi": "16동기", "donggi_num": 16, "attendance": "풀참", "classification": "특이사항", "arrival_note": "금요일 오후(두시 이후) IN만 도와주세요.", "car_owner": false, "car_share": null, "fri_vehicle": "자차", "sat_vehicle": null, "sun_vehicle": "자차", "status": "배치", "memo": "이지원 차 동승 · 금 오후", "car_group": "이지원", "gender": "남", "applied_at": "2026-07-19"}, {"name": "서성완", "donggi": "16동기", "donggi_num": 16, "attendance": "풀참", "classification": "풀참", "arrival_note": null, "car_owner": true, "car_share": "가능(3명)", "fri_vehicle": "교회버스", "sat_vehicle": null, "sun_vehicle": "45인버스", "status": "배치", "memo": null, "car_group": null, "gender": "남", "applied_at": "2026-07-19"}, {"name": "손상훈", "donggi": "16동기", "donggi_num": 16, "attendance": "풀참", "classification": "풀참", "arrival_note": null, "car_owner": false, "car_share": null, "fri_vehicle": "교회버스", "sat_vehicle": null, "sun_vehicle": "45인버스", "status": "배치", "memo": null, "car_group": null, "gender": "남", "applied_at": "2026-07-19"}, {"name": "신수빈", "donggi": "16동기", "donggi_num": 16, "attendance": "풀참", "classification": "풀참", "arrival_note": null, "car_owner": false, "car_share": null, "fri_vehicle": "교회버스", "sat_vehicle": null, "sun_vehicle": "45인버스", "status": "배치", "memo": null, "car_group": null, "gender": "여", "applied_at": "2026-07-19"}, {"name": "윤혜성", "donggi": "16동기", "donggi_num": 16, "attendance": "풀참", "classification": "풀참", "arrival_note": null, "car_owner": false, "car_share": null, "fri_vehicle": "교회버스", "sat_vehicle": null, "sun_vehicle": "45인버스", "status": "배치", "memo": null, "car_group": null, "gender": "남", "applied_at": "2026-07-21"}, {"name": "조형준", "donggi": "16동기", "donggi_num": 16, "attendance": "풀참", "classification": "풀참", "arrival_note": null, "car_owner": false, "car_share": null, "fri_vehicle": "교회버스", "sat_vehicle": null, "sun_vehicle": "45인버스", "status": "배치", "memo": null, "car_group": null, "gender": "남", "applied_at": "2026-07-19"}, {"name": "허지혜", "donggi": "16동기", "donggi_num": 16, "attendance": "풀참", "classification": "풀참", "arrival_note": null, "car_owner": true, "car_share": "3-4명 가능", "fri_vehicle": "교회버스", "sat_vehicle": null, "sun_vehicle": "45인버스", "status": "배치", "memo": null, "car_group": null, "gender": "여", "applied_at": "2026-07-19"}, {"name": "김민기", "donggi": "15동기", "donggi_num": 15, "attendance": "풀참", "classification": "풀참", "arrival_note": null, "car_owner": true, "car_share": "가능", "fri_vehicle": "교회버스", "sat_vehicle": null, "sun_vehicle": "45인버스", "status": "배치", "memo": null, "car_group": null, "gender": "남", "applied_at": "2026-07-19"}, {"name": "박혜은", "donggi": "15동기", "donggi_num": 15, "attendance": "풀참", "classification": "풀참", "arrival_note": null, "car_owner": true, "car_share": "가능(3명) - 서성완과 동일", "fri_vehicle": "교회버스", "sat_vehicle": null, "sun_vehicle": "45인버스", "status": "배치", "memo": null, "car_group": null, "gender": "여", "applied_at": "2026-07-19"}, {"name": "송정재", "donggi": "15동기", "donggi_num": 15, "attendance": "풀참", "classification": "풀참", "arrival_note": null, "car_owner": false, "car_share": null, "fri_vehicle": "교회버스", "sat_vehicle": null, "sun_vehicle": "45인버스", "status": "배치", "memo": null, "car_group": null, "gender": "여", "applied_at": "2026-07-21"}, {"name": "이시온", "donggi": "15동기", "donggi_num": 15, "attendance": "부분참석", "classification": "특이사항", "arrival_note": "토요일 오전", "car_owner": false, "car_share": null, "fri_vehicle": null, "sat_vehicle": "교회버스", "sun_vehicle": null, "status": "배치", "memo": null, "car_group": null, "gender": "여", "applied_at": "2026-07-19"}, {"name": "이은천", "donggi": "15동기", "donggi_num": 15, "attendance": "풀참", "classification": "특이사항", "arrival_note": "금요일 저녁 IN", "car_owner": false, "car_share": null, "fri_vehicle": "자차", "sat_vehicle": null, "sun_vehicle": "자차", "status": "배치", "memo": "김현동 차 동승 · 금 저녁 IN", "car_group": "김현동", "gender": "남", "applied_at": "2026-07-21"}, {"name": "조범근", "donggi": "15동기", "donggi_num": 15, "attendance": "풀참", "classification": "풀참", "arrival_note": null, "car_owner": true, "car_share": "2명", "fri_vehicle": "교회버스", "sat_vehicle": null, "sun_vehicle": "45인버스", "status": "배치", "memo": null, "car_group": null, "gender": "남", "applied_at": "2026-07-23"}, {"name": "김용진", "donggi": "14동기", "donggi_num": 14, "attendance": "풀참", "classification": "풀참", "arrival_note": null, "car_owner": false, "car_share": null, "fri_vehicle": "교회버스", "sat_vehicle": null, "sun_vehicle": "45인버스", "status": "배치", "memo": null, "car_group": null, "gender": "남", "applied_at": "2026-07-19"}, {"name": "신성령", "donggi": "14동기", "donggi_num": 14, "attendance": "풀참", "classification": "풀참", "arrival_note": null, "car_owner": false, "car_share": null, "fri_vehicle": "교회버스", "sat_vehicle": null, "sun_vehicle": "45인버스", "status": "배치", "memo": null, "car_group": null, "gender": "여", "applied_at": "2026-07-19"}, {"name": "유재영", "donggi": "14동기", "donggi_num": 14, "attendance": "부분참석", "classification": "특이사항", "arrival_note": "토요일 오전 IN", "car_owner": false, "car_share": null, "fri_vehicle": null, "sat_vehicle": "교회버스", "sun_vehicle": null, "status": "배치", "memo": null, "car_group": null, "gender": "남", "applied_at": "2026-07-19"}, {"name": "이민아", "donggi": "14동기", "donggi_num": 14, "attendance": "부분참석", "classification": "특이사항", "arrival_note": "토요일 오전 in", "car_owner": false, "car_share": null, "fri_vehicle": null, "sat_vehicle": "교회버스", "sun_vehicle": null, "status": "배치", "memo": null, "car_group": null, "gender": "여", "applied_at": "2026-07-19"}, {"name": "이준호", "donggi": "14동기", "donggi_num": 14, "attendance": "풀참", "classification": "풀참", "arrival_note": null, "car_owner": false, "car_share": null, "fri_vehicle": "교회버스", "sat_vehicle": null, "sun_vehicle": "45인버스", "status": "배치", "memo": null, "car_group": null, "gender": "남", "applied_at": "2026-07-21"}, {"name": "천재영", "donggi": "14동기", "donggi_num": 14, "attendance": "부분참석", "classification": "특이사항", "arrival_note": "토요일 오전", "car_owner": false, "car_share": null, "fri_vehicle": null, "sat_vehicle": "교회버스", "sun_vehicle": null, "status": "배치", "memo": null, "car_group": null, "gender": "여", "applied_at": "2026-07-24"}, {"name": "김현동", "donggi": "13동기", "donggi_num": 13, "attendance": "부분참석", "classification": "특이사항", "arrival_note": "금 저녁 IN", "car_owner": true, "car_share": "가능(4명)", "fri_vehicle": "자차", "sat_vehicle": null, "sun_vehicle": "자차", "status": "배치", "memo": "금 저녁·자차", "car_group": "김현동", "gender": "남", "applied_at": "2026-07-19"}, {"name": "이지원", "donggi": "12동기", "donggi_num": 12, "attendance": "부분참석", "classification": "특이사항", "arrival_note": "금요일 4시 이후 자차", "car_owner": true, "car_share": "가능(3명)", "fri_vehicle": "자차", "sat_vehicle": null, "sun_vehicle": "자차", "status": "배치", "memo": "금요일 자차 출발(4시 이후)", "car_group": "이지원", "gender": "남", "applied_at": "2026-07-21"}, {"name": "방가예", "donggi": "11동기", "donggi_num": 11, "attendance": "부분참석", "classification": "특이사항", "arrival_note": "토요일 오전 IN", "car_owner": false, "car_share": null, "fri_vehicle": null, "sat_vehicle": "교회버스", "sun_vehicle": null, "status": "배치", "memo": null, "car_group": null, "gender": "여", "applied_at": "2026-07-21"}, {"name": "정보라", "donggi": "10동기", "donggi_num": 10, "attendance": "풀참", "classification": "풀참", "arrival_note": null, "car_owner": false, "car_share": null, "fri_vehicle": "교회버스", "sat_vehicle": null, "sun_vehicle": "45인버스", "status": "배치", "memo": null, "car_group": null, "gender": "여", "applied_at": "2026-07-21"}, {"name": "임주형", "donggi": "4동기", "donggi_num": 4, "attendance": "풀참", "classification": "풀참", "arrival_note": null, "car_owner": false, "car_share": null, "fri_vehicle": "교회버스", "sat_vehicle": null, "sun_vehicle": "45인버스", "status": "배치", "memo": null, "car_group": null, "gender": "남", "applied_at": "2026-07-19"}];
+/* ======================================= */
+const CAP = { "교회버스":30, "45인버스":45, "스타렉스":8 };
+const sb = null;
+let ALL = [];
+
+function isFlag(m){ const t=(m.memo||'')+(m.arrival_note||''); return m.status==='보류'||/애매|확인|대기|미정/.test(t); }
+function esc(s){return (s??'').toString().replace(/[&<>]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;'}[c]));}
+
+function load(){
+  try{ ALL = EMBEDDED; render();
+    document.getElementById('loading').style.display='none';
+    document.getElementById('content').style.display='block';
+    document.getElementById('updated').textContent='데이터 기준: '+DATA_DATE;
+  }catch(e){ document.getElementById('loading').style.display='none';
+    const el=document.getElementById('err'); el.style.display='block'; el.textContent='표시 중 오류: '+(e.message||e); }
+}
+
+function stat(n,l,cls){return `<div class="stat ${cls||''}"><div class="n tabnum">${n}</div><div class="l">${l}</div></div>`;}
+function attTag(m){return m.attendance==='풀참'?'<span class="tag full">풀참</span>':'<span class="tag part">부분참석</span>';}
+function seatOf(m){
+  if(m.status==='보류') return '보류';
+  const a=[]; if(m.fri_vehicle) a.push('금 '+m.fri_vehicle); if(m.sat_vehicle) a.push('토 '+m.sat_vehicle); if(m.sun_vehicle) a.push('일 '+m.sun_vehicle);
+  return a.join(' · ')||'-';
+}
+
+function render(){
+  const q=(document.getElementById('q').value||'').trim();
+  const qmatch=m=>!q||((m.name||'').includes(q)||(m.donggi||'').includes(q));
+
+  // counts on tabs
+  document.getElementById('c-roster').textContent=ALL.length;
+  document.getElementById('c-special').textContent=ALL.filter(m=>m.classification==='특이사항').length;
+
+  // STATS
+  const full=ALL.filter(m=>m.classification==='풀참').length;
+  const part=ALL.filter(m=>m.classification==='특이사항').length;
+  const car=ALL.filter(m=>m.car_owner).length;
+  const hold=ALL.filter(m=>m.status==='보류').length;
+  document.getElementById('statCards').innerHTML=
+    stat(ALL.length,'전체 인원')+stat(full,'풀참','go')+stat(part,'부분참석','amber')+stat(car,'자차 보유')+stat(hold,'보류','hold');
+  // ── 참석·출발 요약 (세로 막대) ──
+  const carN=ALL.filter(m=>m.fri_vehicle==='자차').length;
+  const friDepart=ALL.filter(m=>m.fri_vehicle==='교회버스'||m.fri_vehicle==='45인버스'||m.fri_vehicle==='자차').length;
+  const satDepart=ALL.filter(m=>m.sat_vehicle==='교회버스').length;
+
+  // ── 성비 (도넛) ──
+  const male=ALL.filter(m=>m.gender==='남').length, female=ALL.filter(m=>m.gender==='여').length;
+  const gtot=male+female||1, mPct=Math.round(male/gtot*100);
+  document.getElementById('genderViz').innerHTML=
+    `<div class="donutwrap"><div class="donut" style="background:conic-gradient(#2f6fb5 0 ${mPct}%, #d99a2b ${mPct}% 100%)"><div class="hole"><b>${gtot}</b><span>전체</span></div></div>`+
+    `<div class="dleg"><div class="row"><span class="dot" style="background:#2f6fb5"></span>남 <b>${male}</b> <span class="pct">${mPct}%</span></div>`+
+    `<div class="row"><span class="dot" style="background:#d99a2b"></span>여 <b>${female}</b> <span class="pct">${100-mPct}%</span></div></div></div>`;
+
+  // ── 주차별 신청 (세로 막대, "N월 N주차") ──
+  function weekMonday(d){ const dt=new Date(d+'T00:00:00'); const off=(dt.getDay()+6)%7; dt.setDate(dt.getDate()-off); return dt; }
+  const wkMap={};
+  ALL.forEach(m=>{ if(m.applied_at){ const key=weekMonday(m.applied_at).toISOString().slice(0,10); wkMap[key]=(wkMap[key]||0)+1; } });
+  const wkeys=Object.keys(wkMap).sort();
+  const perMonth={}, wlabel={};
+  wkeys.forEach(key=>{ const mo=new Date(key+'T00:00:00').getMonth()+1; perMonth[mo]=(perMonth[mo]||0)+1; wlabel[key]=mo+'월 '+perMonth[mo]+'주차'; });
+  const wmax=Math.max(1,...wkeys.map(k=>wkMap[k]));
+  document.getElementById('weekViz').innerHTML=wkeys.length? '<div class="vbars vbars-c compact">'+wkeys.map(k=>
+    `<div class="vbar"><div class="val">${wkMap[k]}</div><div class="vcol"><i style="height:${Math.round(wkMap[k]/wmax*100)}%;background:#2f6fb5"></i></div><div class="lab">${wlabel[k]}</div></div>`
+  ).join('')+'</div>' : '<div class="note" style="padding:6px 2px">신청일 데이터 없음</div>';
+
+  // ── ① 차량별 탑승 현황 (요일별 카드 + 요일 합계) ──
+  const H=150, maxCap=45;
+  const days2=[
+    {d:'금요일 8/14', buses:[
+      {l:'교회버스',v:ALL.filter(m=>m.fri_vehicle==='교회버스').length,cap:30,c:'#2f6fb5'},
+      {l:'45인',v:ALL.filter(m=>m.fri_vehicle==='45인버스').length,cap:45,c:'#f6c445'},
+      {l:'자차',v:carN,cap:12,c:'#3aa38a'},
+      {l:'스타렉스',v:ALL.filter(m=>m.fri_vehicle==='스타렉스').length,cap:8,c:'#7a5cc0'},
+    ]},
+    {d:'토요일 8/15', buses:[
+      {l:'교회버스',v:satDepart,cap:30,c:'#2f6fb5'},
+    ]},
+    {d:'일요일 8/16 귀가', buses:[
+      {l:'45인',v:ALL.filter(m=>m.sun_vehicle==='45인버스').length,cap:45,c:'#f6c445'},
+      {l:'자차',v:ALL.filter(m=>m.sun_vehicle==='자차').length,cap:12,c:'#3aa38a'},
+      {l:'스타렉스',v:ALL.filter(m=>m.sun_vehicle==='스타렉스').length,cap:8,c:'#7a5cc0'},
+    ]},
+  ];
+  document.getElementById('capViz').innerHTML='<div class="daygrid">'+days2.map(day=>{
+    const tot=day.buses.reduce((a,b)=>a+b.v,0);
+    const bars=day.buses.map(x=>{
+      const trackH=Math.round(x.cap/maxCap*H), over=x.v>x.cap, fill=Math.min(100,Math.round(x.v/x.cap*100));
+      return `<div class="vbar"><div class="val">${x.v}<span class="cap2">/${x.cap}</span></div>`+
+        `<div class="vcol" style="height:${trackH}px"><i style="height:${fill}%;background:${over?'var(--hold)':x.c}"></i></div>`+
+        `<div class="lab">${x.l}</div></div>`;
+    }).join('');
+    return `<div class="daycard"><div class="dch"><span class="d">${day.d}</span><span class="tot">합계 <b>${tot}</b>명</span></div><div class="vbars vbars-c">${bars}</div></div>`;
+  }).join('')+'</div>';
+
+  // ── ② 동기 분포 (히스토그램) ──
+  const gi={};
+  ALL.forEach(m=>{ if(m.donggi_num!=null){ gi[m.donggi_num]=(gi[m.donggi_num]||0)+1; } });
+  const gks=Object.keys(gi).map(Number).sort((a,b)=>a-b);
+  const gmax=Math.max(1,...gks.map(k=>gi[k]));
+  document.getElementById('donggiViz').innerHTML='<div class="vbars">'+gks.map(k=>{
+    const c=k<=19?'#2f6fb5':'#f6c445';
+    return `<div class="vbar" style="min-width:34px"><div class="val" style="font-size:13px">${gi[k]}</div>`+
+      `<div class="vcol" style="max-width:34px"><i style="height:${Math.round(gi[k]/gmax*100)}%;background:${c}"></i></div>`+
+      `<div class="lab" style="font-size:11px">${k}</div></div>`;
+  }).join('')+'</div>';
+
+  // ── ③ 부분참석 도착 시간대 (비고 분석) ──
+  function bucket(m){
+    const t=(m.arrival_note||'')+' '+(m.memo||'');
+    if(/토.*(오전|아침)/.test(t)) return '토 오전';
+    if(/금.*저녁/.test(t)) return '금 저녁';
+    if(/금.*(오후|\d시|4시|2시)/.test(t)) return '금 오후';
+    return '확인 필요';
+  }
+  const order=['금 오후','금 저녁','토 오전','확인 필요'];
+  const tcount={}; order.forEach(o=>tcount[o]=0);
+  const parts=ALL.filter(m=>m.classification==='특이사항');
+  parts.forEach(m=>{ tcount[bucket(m)]++; });
+  const tmax=Math.max(1,...order.map(o=>tcount[o]));
+  const tcol={'금 오후':'#d99a2b','금 저녁':'#7a5cc0','토 오전':'#2f9e6f','확인 필요':'#a23b3b'};
+  document.getElementById('timingViz').innerHTML='<div class="vbars">'+order.map(o=>
+    `<div class="vbar"><div class="val">${tcount[o]}</div><div class="vcol"><i style="height:${Math.round(tcount[o]/tmax*100)}%;background:${tcol[o]}"></i></div><div class="lab">${o}</div></div>`
+  ).join('')+'</div>';
+
+  // ── ④ 현황 요약 (분석) ──
+  const busSeatsFri=30+45, onBusFri=ALL.filter(m=>m.fri_vehicle==='교회버스'||m.fri_vehicle==='45인버스').length;
+  const carSeats=Object.keys(ALL.filter(m=>m.fri_vehicle==='자차').reduce((a,m)=>{a[m.car_group||m.name]=1;return a;},{})).length*4;
+  const carRiders=carN;
+  const flagged=ALL.filter(m=>{const t=(m.memo||'')+(m.arrival_note||''); return /애매|확인|대기|미정/.test(t);});
+  const church=ALL.filter(m=>m.fri_vehicle==='교회버스').length, rent=ALL.filter(m=>m.fri_vehicle==='45인버스').length;
+  const rows=[];
+  rows.push(['info',`금요일 버스 좌석 <b>${busSeatsFri}석</b> 중 <b>${onBusFri}명</b> 탑승 · <b>${busSeatsFri-onBusFri}석</b> 여유`,`교회버스 ${church}/30, 45인 ${rent}/45`]);
+  rows.push(['info',`자차 <b>${Object.keys(ALL.filter(m=>m.fri_vehicle==='자차').reduce((a,m)=>{a[m.car_group||m.name]=1;return a;},{})).length}대</b>에 <b>${carRiders}명</b> · 남은 좌석 약 <b>${Math.max(0,carSeats-carRiders)}석</b>`,'운전자 포함 4인승 기준']);
+  rows.push(['info',`부분참석 <b>${parts.length}명</b> 중 토요일 오전 도착 <b>${tcount['토 오전']}명</b>이 가장 많음`,'토요일 교회버스로 집중']);
+  if(flagged.length) rows.push(['warn',`일정 확인 필요 <b>${flagged.length}명</b>: ${flagged.map(m=>esc(m.name)).join(', ')}`,'비고에 미정/확인 표기 있음']);
+  if(hold===0) rows.push(['ok','전원 편성 완료 · 보류 0명','미배치 없음']);
+  else rows.push(['warn',`보류 <b>${hold}명</b> — 편성 필요`,'']);
+  document.getElementById('insightViz').innerHTML='<div class="insight">'+rows.map(r=>
+    `<div class="irow2"><span class="ico ${r[0]}">${r[0]==='ok'?'✓':r[0]==='warn'?'!':'i'}</span><span><span>${r[1]}</span>${r[2]?`<br><span class="sub">${r[2]}</span>`:''}</span></div>`
+  ).join('')+'</div>';
+
+  // ROSTER
+  const rrows=ALL.filter(qmatch).map(m=>{
+    const cls=m.status==='보류'?'hold':(isFlag(m)?'flag':'');
+    return `<tr class="${cls}"><td>${esc(m.name)}</td><td>${esc(m.donggi||'')}</td><td>${attTag(m)}</td>`+
+      `<td>${esc(m.arrival_note||'')}</td><td class="tabnum">${m.car_owner?'○':'–'}</td><td>${esc(m.car_share||'')}</td><td>${m.status==='보류'?'보류':'배치'}</td></tr>`;
+  }).join('');
+  document.querySelector('#rosterTbl tbody').innerHTML=rrows||`<tr><td colspan="7" class="empty">검색 결과 없음</td></tr>`;
+
+  // SPECIAL
+  const srows=ALL.filter(m=>m.classification==='특이사항').filter(qmatch).map(m=>{
+    const cls=m.status==='보류'?'hold':'flag';
+    return `<tr class="${cls}"><td>${esc(m.name)}</td><td>${esc(m.donggi||'')}</td><td>${attTag(m)}</td>`+
+      `<td>${esc(m.arrival_note||'')}</td><td>${esc(seatOf(m))}</td><td>${esc(m.memo||'')}</td></tr>`;
+  }).join('');
+  document.querySelector('#specialTbl tbody').innerHTML=srows||`<tr><td colspan="6" class="empty">검색 결과 없음</td></tr>`;
+
+  // CARS
+  const days=[
+    {d:'금요일 8/14', t:'오전 10:00 · 교회 → 홍천기도원', buses:[
+       {name:'교회버스', sub:'19동기 이하', key:'교회버스', sel:m=>m.fri_vehicle==='교회버스'},
+       {name:'45인 버스', sub:'20~26동기', key:'45인버스', sel:m=>m.fri_vehicle==='45인버스'},
+       {name:'스타렉스', sub:'', key:'스타렉스', sel:m=>m.fri_vehicle==='스타렉스'},
+     ]},
+    {d:'토요일 8/15', t:'오전 10:00 · 교회 → 홍천기도원', buses:[
+       {name:'교회버스', sub:'', key:'교회버스', sel:m=>m.sat_vehicle==='교회버스'},
+     ]},
+    {d:'일요일 8/16', t:'홍천기도원 → 교회 (귀가) · 주일이라 교회버스 미운영', buses:[
+       {name:'45인 버스', sub:'전체', key:'45인버스', sel:m=>m.sun_vehicle==='45인버스'},
+       {name:'스타렉스', sub:'', key:'스타렉스', sel:m=>m.sun_vehicle==='스타렉스'},
+     ]},
+  ];
+  let html='';
+  // 자차 블록 생성 함수 (fri: 오전/오후 분리, sun: 귀가 단일)
+  function buildCars(field, mode){
+    const carPpl=ALL.filter(m=>m[field]==='자차');
+    if(!carPpl.length) return '';
+    const groups={};
+    carPpl.forEach(m=>{const k=m.car_group||m.name;(groups[k]=groups[k]||[]).push(m);});
+    const cardHtml=(gk)=>{
+      const mem=groups[gk];
+      const drv=mem.find(m=>m.car_owner)||mem.find(m=>m.name===gk)||mem[0];
+      const occ=[drv,...mem.filter(m=>m!==drv)];
+      const CARCAP=4;
+      let slots='';
+      for(let i=0;i<Math.max(CARCAP,occ.length);i++){
+        const m=occ[i];
+        if(m){
+          const isDrv=(m===drv);
+          let cls='cseat'+(isDrv?' drv':'')+(i>=CARCAP?' over':'');
+          if(q) cls+= ((m.name||'').includes(q)||(m.donggi||'').includes(q))?' hit':' dim';
+          slots+=`<div class="${cls}">${isDrv?'<span class="rl">🚘 운전</span>':''}<span>${esc(m.name)}</span><span class="g">${esc((m.donggi||'').replace('동기',''))}</span></div>`;
+        }else{ slots+='<div class="cseat empty"></div>'; }
+      }
+      return {drv, html:`<div class="carcard"><div class="carhd"><span class="cn">🚗 ${esc(drv.name)}님 차</span><span class="cc">${occ.length} / 4</span></div><div class="carbody">${slots}</div><span class="wheel l"></span><span class="wheel r"></span></div>`};
+    };
+    if(mode==='fri'){
+      let amCars='', pmCars='';
+      Object.keys(groups).forEach(gk=>{const c=cardHtml(gk); if(c.drv.classification==='풀참') amCars+=c.html; else pmCars+=c.html;});
+      let ci='';
+      if(amCars) ci+=`<div class="cargrp-hd am">금요일 오전 · 개별 IN</div><div class="cars">${amCars}</div>`;
+      if(pmCars) ci+=`<div class="cargrp-hd pm">금요일 오후 · 개별 IN (시간 미정)</div><div class="cars">${pmCars}</div>`;
+      return `<div class="day"><div class="dayhd"><span class="d">자차 · 개별 차량</span></div>${ci}</div>`;
+    }else{
+      let cs=''; Object.keys(groups).forEach(gk=>{cs+=cardHtml(gk).html;});
+      return `<div class="day"><div class="dayhd"><span class="d">자차 · 귀가</span><span class="t">왕복 · 각자 차량으로 귀가</span></div><div class="cars">${cs}</div></div>`;
+    }
+  }
+  const friCarsBlock=buildCars('fri_vehicle','fri');
+  const sunCarsBlock=buildCars('sun_vehicle','sun');
+  // 날짜별 총인원 요약
+  const friTot=ALL.filter(m=>['교회버스','45인버스','스타렉스','자차'].includes(m.fri_vehicle)).length;
+  const friPM=ALL.filter(m=>m.fri_vehicle==='자차'&&m.classification==='특이사항').length;
+  const friAM=friTot-friPM;
+  const satIN=ALL.filter(m=>m.sat_vehicle==='교회버스').length;
+  const sunAssigned=ALL.filter(m=>['45인버스','자차','스타렉스'].includes(m.sun_vehicle)).length;
+  const sunUnassigned=ALL.filter(m=>!m.sun_vehicle).length;
+  html+=`<div class="daysum">`+
+    `<div class="dscard"><div class="dsd">금요일 출발</div><div class="dsn">${friTot}<span>명</span></div><div class="dssub">오전 다같이 ${friAM} · 오후 후발대 ${friPM}</div></div>`+
+    `<div class="dscard"><div class="dsd">토요일 합류</div><div class="dsn">${satIN}<span>명</span></div><div class="dssub">토 오전 IN · 누적 ${ALL.length}명</div></div>`+
+    `<div class="dscard"><div class="dsd">일요일 귀가</div><div class="dsn">${ALL.length}<span>명</span></div><div class="dssub">배정 ${sunAssigned}${sunUnassigned?` · <span class="warn">미배정 ${sunUnassigned}</span>`:''}</div></div>`+
+    `</div>`;
+  for(const day of days){
+    let inner='';
+    for(const b of day.buses){
+      const rs=ALL.filter(b.sel);
+      const cap=CAP[b.key]||rs.length;
+      const over=rs.length>cap;
+      const N=Math.max(cap,rs.length);
+      let cells='';
+      for(let i=0;i<N;i++){
+        if(i%2===1) cells+='<div class="aislecell"></div>';
+        const m=rs[i];
+        if(m){
+          let cls='seat'+(isFlag(m)?' flag':'')+(i>=cap?' over':'');
+          if(q) cls+= ((m.name||'').includes(q)||(m.donggi||'').includes(q))?' hit':' dim';
+          cells+=`<div class="${cls}">${esc(m.name)}<span class="g">${esc((m.donggi||'').replace('동기',''))}</span></div>`;
+        }else{
+          cells+='<div class="seat empty"></div>';
+        }
+      }
+      inner+=`<div class="busmap${b.key==='교회버스'?' church':(b.key==='스타렉스'?' starex':'')}"><div class="sign"><span>🚌 ${b.name}${b.sub?' · '+b.sub:''}</span>`+
+        `<span class="cap ${over?'over':''}">${rs.length} / ${cap}${over?' 초과':''}</span></div>`+
+        `<div class="seatgrid">${cells}</div></div>`;
+    }
+    if(day.indiv){
+      const rs=ALL.filter(day.indiv.sel).filter(qmatch);
+      const rows=rs.length?rs.map(m=>`<div class="indiv-row"><span class="nm">${esc(m.name)}</span><span class="g">${esc(m.donggi||'')}</span><span class="mm">${esc(m.memo||m.arrival_note||'')}</span></div>`).join(''):`<div class="empty">해당 없음</div>`;
+      inner+=`<div class="bus"><div class="bushd"><div class="bn">${day.indiv.title}</div><div class="cap">${ALL.filter(day.indiv.sel).length}명</div></div>${rows}</div>`;
+    }
+    html+=`<div class="day"><div class="dayhd"><span class="d">${day.d}</span><span class="t">${day.t}</span></div><div class="buses">${inner}</div></div>`;
+    if(day.d.indexOf('금요일')===0) html+=friCarsBlock;
+    if(day.d.indexOf('일요일')===0) html+=sunCarsBlock;
+  }
+  // (자차 블록은 각 요일 다음에 삽입됨)
+  const holds=ALL.filter(m=>m.status==='보류').filter(qmatch);
+  if(ALL.filter(m=>m.status==='보류').length){
+    html+=`<div class="day"><div class="dayhd"><span class="d">보류 · 편성 대기</span></div><div class="buses"><div class="bus">`+
+      (holds.length?holds.map(m=>`<div class="indiv-row"><span class="nm">${esc(m.name)}</span><span class="g">${esc(m.donggi||'')}</span><span class="mm">${esc(m.memo||m.arrival_note||'')}</span></div>`).join(''):`<div class="empty">검색 결과 없음</div>`)+
+      `</div></div></div>`;
+  }
+  document.getElementById('days').innerHTML=html;
+}
+
+// tabs
+document.getElementById('tabs').addEventListener('click',e=>{
+  const b=e.target.closest('.tab'); if(!b) return;
+  document.querySelectorAll('.tab').forEach(t=>t.classList.toggle('on',t===b));
+  const name=b.dataset.tab;
+  document.querySelectorAll('.panel').forEach(p=>p.classList.toggle('on',p.dataset.panel===name));
+});
+document.getElementById('q').addEventListener('input',render);
+load();
+</script>
+</body>
+</html>
